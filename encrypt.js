@@ -10,21 +10,20 @@ const ENCRYPTION_KEY = crypto.scryptSync(
 );
 const IV_LENGTH = 16;
 
-// Encrypt function: Generates JWT and encrypts it
 const encrypt = (payload) => {
   try {
-    // Generate JWT token
+    // Create a JWT token
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
 
     // Generate IV
     const iv = crypto.randomBytes(IV_LENGTH);
     const cipher = crypto.createCipheriv("aes-256-cbc", ENCRYPTION_KEY, iv);
 
-    // Encrypt token
+    // Encrypt the token
     let encrypted = cipher.update(token, "utf8", "hex");
     encrypted += cipher.final("hex");
 
-    // Return IV + encrypted token as a single string
+    // Return IV + encrypted token
     return iv.toString("hex") + encrypted;
   } catch (error) {
     console.error("Encryption failed:", error);
@@ -32,7 +31,6 @@ const encrypt = (payload) => {
   }
 };
 
-// Decrypt function: Decrypts token and verifies JWT
 const decrypt = (encryptedToken) => {
   try {
     // Extract IV and encrypted token
@@ -41,7 +39,7 @@ const decrypt = (encryptedToken) => {
 
     const decipher = crypto.createDecipheriv("aes-256-cbc", ENCRYPTION_KEY, iv);
 
-    // Decrypt token
+    // Decrypt the token
     let decrypted = decipher.update(encryptedText, "hex", "utf8");
     decrypted += decipher.final("utf8");
 
@@ -53,8 +51,4 @@ const decrypt = (encryptedToken) => {
   }
 };
 
-module.exports = {
-  encrypt,
-  decrypt,
-};
-Script.js;
+module.exports = { encrypt, decrypt };
